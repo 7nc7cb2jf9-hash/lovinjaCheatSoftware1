@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LovinjaCheat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-background iframe {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        
+        @media (aspect-ratio > 16/9) {
+            .video-background iframe {
+                width: 100%;
+                height: calc(100vw * 9 / 16);
+            }
+        }
+        
+        @media (aspect-ratio < 16/9) {
+            .video-background iframe {
+                width: calc(100vh * 16 / 9);
+                height: 100%;
+            }
+        }
+
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.6) 100%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .burger {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 30px;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+
+        .burger span {
+            width: 100%;
+            height: 3px;
+            background: white;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        .burger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .burger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(8px, -8px);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            transition: 0.4s;
+            z-index: 999;
+            padding: 80px 30px;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 20px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: 0.3s;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(10px);
+        }
+
+        .main-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: 0.5s;
+        }
+
+        .main-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 60px;
+            opacity: 0.8;
+        }
+
+        .get-now-btn {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 20px 50px;
+            font-size: 1.5rem;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            transition: 0.3s;
+        }
+
+        .get-now-btn:hover {
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.8);
+            transform: scale(1.05);
+        }
+
+        .options-screen {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            opacity: 0;
+            transition: 0.5s;
+        }
+
+        .options-screen.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .options-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .option-card {
+            background: rgba(40, 40, 40, 0.9);
+            padding: 40px 60px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .option-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.6);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .option-card h3 {
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .details-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            opacity: 0;
+            transition: 0.5s;
+            padding: 100px 20px 50px;
+        }
+
+        .details-screen.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .product-card {
+            background: rgba(40, 40, 40, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            margin-bottom: 30px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .product-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .product-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .benefits-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .benefits-list li {
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 3px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .benefits-list li::before {
+            content: "✓ ";
+            color: #4CAF50;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .cart-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            font-size: 1.3rem;
+        }
+
+        .cart-icon {
+            font-size: 2rem;
+        }
+
+        .buy-now-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 18px 60px;
+            font-size: 1.5rem;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+
+        .buy-now-btn:hover {
+            box-shadow: 0 0 50px rgba(102, 126, 234, 0.8);
+            transform: scale(1.05);
+        }
+
+        .support-chat {
+            position: fixed;
+            bottom: -500px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: rgba(30, 30, 30, 0.98);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            transition: 0.4s;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .support-chat.active {
+            bottom: 20px;
+        }
+
+        .chat-header {
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 13px 13px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .close-chat {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-chat:hover {
+            opacity: 0.7;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        .message {
+            padding: 12px 15px;
+            border-radius: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+            animation: fadeInMessage 0.3s;
+        }
+
+        @keyframes fadeInMessage {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.bot {
+            background: rgba(102, 126, 234, 0.2);
+            align-self: flex-start;
+            border: 1px solid rgba(102, 126, 234, 0.4);
+        }
+
+        .message.user {
+            background: rgba(255, 255, 255, 0.1);
+            align-self: flex-end;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .typing-indicator {
+            padding: 12px 15px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 10px;
+            max-width: 80%;
+            align-self: flex-start;
+            border: 1px solid rgba(102, 126, 234, 0.4);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .typing-indicator.active {
+            opacity: 1;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 10px 15px;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .ticket-link {
+            color: #667eea;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .ticket-link:hover {
+            color: #764ba2;
+        }
+
+        .info-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.4s;
+            overflow-y: auto;
+        }
+
+        .info-modal.active {
+            display: flex;
+            opacity: 1;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .info-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 0 50px rgba(102, 126, 234, 0.5);
+        }
+
+        .info-content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .info-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+        }
+
+        .info-content::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.5);
+            border-radius: 5px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .info-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .info-section {
+            margin-bottom: 30px;
+        }
+
+        .info-section h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .info-section p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .credit-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 3px solid #667eea;
+        }
+
+        .credit-label {
+            font-weight: bold;
+            color: #667eea;
+            min-width: 120px;
+        }
+
+        .credit-name {
+            font-size: 1.2rem;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.5), transparent);
+            margin: 30px 0;
+        }
+
+        .payment-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .payment-badge {
+            background: rgba(102, 126, 234, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(102, 126, 234, 0.4);
+            font-size: 0.9rem;
+        }
+
+        .copyright {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+            font-size: 0.85rem;
+            opacity: 0.6;
+            z-index: 100;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="video-background" id="videoBackground">
+        <!-- YouTube video embedded as background -->
+        <iframe
+            id="rustVideo"
+            src="https://www.youtube.com/embed/LGcECozNXEw?autoplay=1&mute=1&loop=1&playlist=LGcECozNXEw&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
+            frameborder="0"
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
+        </iframe>
+    </div>
+    <div class="video-overlay"></div>
+
+    <div class="copyright">© 2026 LovinjaCheatSoftware.com - All Rights Reserved</div>
+
+    <div class="burger" id="burger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <a href="#support" id="supportLink">Support</a>
+        <a href="#credit" id="creditLink">Credit</a>
+        <a href="#info" id="infoLink">Info</a>
+    </div>
+
+    <div class="main-screen" id="mainScreen">
+        <h1>LovinjaCheat</h1>
+        <p class="subtitle">Welcome to Lovenja Hub.</p>
+        <button class="get-now-btn" id="getNoWBtn">Get Now!</button>
+    </div>
+
+    <div class="options-screen" id="optionsScreen">
+        <button class="back-btn" id="backToMain">← Back</button>
+        <h2 style="font-size: 3rem; margin-bottom: 50px;">Choose Your Source</h2>
+        <div class="options-container">
+            <div class="option-card" data-product="key">
+                <h3>Source Key</h3>
+            </div>
+            <div class="option-card" data-product="script">
+                <h3>Source Script</h3>
+            </div>
+            <div class="option-card" data-product="usb">
+                <h3>Source USB</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="details-screen" id="detailsScreen">
+        <button class="back-btn" id="backToOptions">← Back</button>
+        <div class="product-card">
+            <div class="product-header">
+                <h2 id="productTitle">Source Key</h2>
+                <p style="opacity: 0.7; font-size: 1.2rem;">Premium Access</p>
+            </div>
+            
+            <ul class="benefits-list" id="benefitsList">
+            </ul>
+
+            <div class="cart-section">
+                <span class="cart-icon">🛒</span>
+                <span>Add to Cart</span>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="buy-now-btn" id="buyNowBtn">Buy Now</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="support-chat" id="supportChat">
+        <div class="chat-header">
+            <h3>🤖 Support Bot</h3>
+            <button class="close-chat" id="closeChat">✕</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+        </div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type your message...">
+            <button class="send-btn" id="sendBtn">➤</button>
+        </div>
+    </div>
+
+    <div class="info-modal" id="infoModal">
+        <div class="info-content">
+            <button class="close-modal" id="closeInfoModal">✕</button>
+            <h2 id="modalTitle">Credits</h2>
+            
+            <div id="modalContent">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURATION - Update these with your Discord info
+        const discordServer = 'https://discord.gg/Fj8T8gxG';
+        const ticketChannelId = 'YOUR_TICKET_CHANNEL_ID'; // The channel where ticket buttons are
+        
+        // For direct ticket links (if your bot supports URL parameters)
+        const ticketUrls = {
+            key: 'https://discord.com/channels/YOUR_SERVER_ID/YOUR_TICKET_CHANNEL_ID',
+            script: 'https://discord.com/channels/YOUR_SERVER_ID/YOUR_TICKET_CHANNEL_ID',
+            usb: 'https://discord.com/channels/YOUR_SERVER_ID/YOUR_TICKET_CHANNEL_ID'
+        };
+
+        // Video background management - YouTube embed
+        // No additional JavaScript needed for YouTube embed
+        // The video will auto-play, loop, and be muted
+
+        const productData = {
+            key: {
+                title: 'Source Key',
+                benefits: [
+                    'Instant digital delivery',
+                    'Lifetime access with updates',
+                    'Easy activation process',
+                    'Secure encryption',
+                    'Multi-device support',
+                    'Priority customer support'
+                ]
+            },
+            script: {
+                title: 'Source Script',
+                benefits: [
+                    'Customizable settings',
+                    'Regular updates included',
+                    'Advanced scripting features',
+                    'Full documentation provided',
+                    'Community script library',
+                    'Technical support 24/7'
+                ]
+            },
+            usb: {
+                title: 'Source USB',
+                benefits: [
+                    'Physical hardware included',
+                    'Plug and play ready',
+                    'No internet required',
+                    'Portable solution',
+                    'Pre-configured setup',
+                    'Includes backup files'
+                ]
+            }
+        };
+
+        const supportResponses = {
+            glitch: [
+                "I understand you're experiencing a glitch. Could you describe what's happening? This will help me assist you better.",
+                "I see you're having a glitch issue. Try refreshing the page first (Ctrl+F5 or Cmd+Shift+R). If that doesn't work, please let me know what specific glitch you're seeing.",
+                "For glitch issues, I recommend: 1) Clear your browser cache, 2) Disable browser extensions temporarily, 3) Try a different browser. Let me know if this helps!"
+            ],
+            bug: [
+                "Thanks for reporting this bug. Can you tell me which page or feature is affected? This will help our team fix it quickly.",
+                "I appreciate you reporting this bug. Could you provide more details about what happened? Screenshots would be helpful if possible.",
+                "Bug reports help us improve! Please describe: 1) What you were trying to do, 2) What actually happened, 3) Your browser type. I'll escalate this to our dev team."
+            ],
+            click: [
+                "If buttons aren't responding, try these steps: 1) Refresh the page, 2) Check if JavaScript is enabled in your browser, 3) Disable ad blockers temporarily.",
+                "Click issues can be frustrating! This might be a browser compatibility issue. What browser are you using? Try updating it to the latest version.",
+                "For unresponsive buttons: Clear your browser cache, try incognito/private mode, or test on a different device. Let me know if any of these work!"
+            ],
+            loading: [
+                "If pages aren't loading properly, check your internet connection first. Then try: 1) Refresh the page, 2) Clear cookies, 3) Try a different browser.",
+                "Loading issues could be network-related. Have you tried: Restarting your router, using a VPN if available, or checking if other websites load normally?",
+                "Slow loading? This might help: 1) Close unused browser tabs, 2) Disable heavy extensions, 3) Check your bandwidth usage. Still having issues?"
+            ],
+            payment: [
+                "For payment issues, please verify: 1) Your payment method is valid, 2) Billing address matches your card, 3) Sufficient funds available. Need more help?",
+                "Payment problems can be tricky. Are you seeing an error message? Different payment methods are available - you might want to try an alternative.",
+                "If payment isn't working, I can help you create a ticket. <ticketlink>Click here to open a support ticket</ticketlink> and our team will assist you directly."
+            ],
+            ticket: [
+                "I'd be happy to help you create a support ticket! <ticketlink>Click here to open a ticket</ticketlink> and one of our specialists will assist you shortly.",
+                "Let me connect you with our support team. <ticketlink>Click here to create a ticket</ticketlink> and we'll get back to you as soon as possible!",
+                "Need personalized help? <ticketlink>Open a support ticket here</ticketlink> and our team will reach out to you directly on Discord."
+            ],
+            sourcekey: [
+                "Interested in Source Key? <ticketlink data-product='key'>Click here to open a ticket</ticketlink> and our team will help you with the purchase process!",
+                "Looking to get Source Key? <ticketlink data-product='key'>Create a ticket here</ticketlink> and we'll guide you through everything you need to know."
+            ],
+            sourcescript: [
+                "Want to learn more about Source Script? <ticketlink data-product='script'>Open a ticket here</ticketlink> and our specialists will assist you!",
+                "Interested in Source Script? <ticketlink data-product='script'>Click here to create a ticket</ticketlink> and we'll help you get started."
+            ],
+            sourceusb: [
+                "Looking into Source USB? <ticketlink data-product='usb'>Click here to open a ticket</ticketlink> and we'll provide all the details you need!",
+                "Want to order Source USB? <ticketlink data-product='usb'>Create a ticket here</ticketlink> and our team will assist with your order."
+            ],
+            account: [
+                "For account issues, I can help with: login problems, password resets, account verification. What specific issue are you facing?",
+                "Account concerns? Make sure you're using the correct email address. If you forgot your password, use the reset option. Still stuck?",
+                "I'm here to help with your account! Common fixes: Check spam folder for verification emails, try logging in incognito mode, or reset your password."
+            ],
+            default: [
+                "I'm here to help! Could you provide more details about the issue you're experiencing? The more specific you are, the better I can assist. Or <ticketlink>click here to create a support ticket</ticketlink> for personalized help.",
+                "Thanks for reaching out! To help you effectively, please describe: 1) What you were trying to do, 2) What went wrong, 3) Any error messages you saw. Alternatively, <ticketlink>open a ticket here</ticketlink>.",
+                "I want to make sure I understand your issue correctly. Can you explain what's happening in more detail? Or if you prefer direct support, <ticketlink>create a ticket here</ticketlink>."
+            ],
+            greeting: [
+                "Hello! I'm your Lovinja support bot. I'm here to help with any issues you're experiencing. What can I help you with today?",
+                "Hi there! Welcome to Lovinja support. I can assist with glitches, bugs, payment issues, and more. What brings you here today?",
+                "Hey! Thanks for contacting support. I'm ready to help you resolve any issues. What's going on?"
+            ]
+        };
+
+        function sanitizeInput(input) {
+            const div = document.createElement('div');
+            div.textContent = input;
+            return div.innerHTML;
+        }
+
+        function addMessage(text, isBot = true, typed = false) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isBot ? 'bot' : 'user'}`;
+            
+            if (typed && isBot) {
+                if (text.includes('<ticketlink>')) {
+                    const parts = text.split(/<ticketlink[^>]*>|<\/ticketlink>/);
+                    const matches = text.match(/<ticketlink[^>]*>(.*?)<\/ticketlink>/g);
+                    
+                    chatMessages.appendChild(messageDiv);
+                    
+                    return new Promise(async (resolve) => {
+                        for (let i = 0; i < parts.length; i++) {
+                            if (parts[i]) {
+                                await typeMessage(messageDiv, parts[i], 15, true);
+                            }
+                            if (matches && matches[i]) {
+                                const productMatch = matches[i].match(/data-product='([^']+)'/);
+                                const linkText = matches[i].match(/<ticketlink[^>]*>(.*?)<\/ticketlink>/)[1];
+                                const link = document.createElement('span');
+                                link.className = 'ticket-link';
+                                link.textContent = linkText;
+                                if (productMatch) {
+                                    link.setAttribute('data-product', productMatch[1]);
+                                }
+                                link.onclick = function() {
+                                    openTicket(this.getAttribute('data-product'));
+                                };
+                                messageDiv.appendChild(link);
+                            }
+                        }
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        resolve();
+                    });
+                } else {
+                    chatMessages.appendChild(messageDiv);
+                    return typeMessage(messageDiv, text, 15);
+                }
+            } else {
+                messageDiv.textContent = text;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                return Promise.resolve();
+            }
+        }
+
+        function typeMessage(element, text, delay = 15, append = false) {
+            return new Promise((resolve) => {
+                let i = 0;
+                if (!append) element.textContent = '';
+                const currentText = element.textContent;
+                const typing = setInterval(() => {
+                    if (i < text.length) {
+                        element.textContent = currentText + text.substring(0, i + 1);
+                        i++;
+                        const chatMessages = document.getElementById('chatMessages');
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    } else {
+                        clearInterval(typing);
+                        resolve();
+                    }
+                }, delay);
+            });
+        }
+
+        function showTyping() {
+            const chatMessages = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator';
+            typingDiv.id = 'currentTyping';
+            typingDiv.innerHTML = `
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            setTimeout(() => {
+                typingDiv.classList.add('active');
+            }, 10);
+        }
+
+        function hideTyping() {
+            const typingDiv = document.getElementById('currentTyping');
+            if (typingDiv) {
+                typingDiv.classList.remove('active');
+                setTimeout(() => typingDiv.remove(), 300);
+            }
+        }
+
+        function getRandomDelay() {
+            return Math.floor(Math.random() * (20000 - 5000 + 1)) + 5000;
+        }
+
+        function getBotResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            const sanitized = message.replace(/<[^>]*>/g, '');
+            
+            if (sanitized.includes('hello') || sanitized.includes('hi') || sanitized.includes('hey')) {
+                return supportResponses.greeting[Math.floor(Math.random() * supportResponses.greeting.length)];
+            } else if (sanitized.includes('ticket') || sanitized.includes('support ticket') || sanitized.includes('create ticket')) {
+                return supportResponses.ticket[Math.floor(Math.random() * supportResponses.ticket.length)];
+            } else if (sanitized.includes('source key') || sanitized.includes('sourcekey') || sanitized.includes('get key') || sanitized.includes('buy key')) {
+                return supportResponses.sourcekey[Math.floor(Math.random() * supportResponses.sourcekey.length)];
+            } else if (sanitized.includes('source script') || sanitized.includes('sourcescript') || sanitized.includes('get script') || sanitized.includes('buy script')) {
+                return supportResponses.sourcescript[Math.floor(Math.random() * supportResponses.sourcescript.length)];
+            } else if (sanitized.includes('source usb') || sanitized.includes('sourceusb') || sanitized.includes('get usb') || sanitized.includes('buy usb')) {
+                return supportResponses.sourceusb[Math.floor(Math.random() * supportResponses.sourceusb.length)];
+            } else if (sanitized.includes('glitch')) {
+                return supportResponses.glitch[Math.floor(Math.random() * supportResponses.glitch.length)];
+            } else if (sanitized.includes('bug')) {
+                return supportResponses.bug[Math.floor(Math.random() * supportResponses.bug.length)];
+            } else if (sanitized.includes('click') || sanitized.includes('button') || sanitized.includes('not working')) {
+                return supportResponses.click[Math.floor(Math.random() * supportResponses.click.length)];
+            } else if (sanitized.includes('load') || sanitized.includes('slow') || sanitized.includes('freeze')) {
+                return supportResponses.loading[Math.floor(Math.random() * supportResponses.loading.length)];
+            } else if (sanitized.includes('payment') || sanitized.includes('pay') || sanitized.includes('card') || sanitized.includes('purchase')) {
+                return supportResponses.payment[Math.floor(Math.random() * supportResponses.payment.length)];
+            } else if (sanitized.includes('account') || sanitized.includes('login') || sanitized.includes('password')) {
+                return supportResponses.account[Math.floor(Math.random() * supportResponses.account.length)];
+            } else {
+                return supportResponses.default[Math.floor(Math.random() * supportResponses.default.length)];
+            }
+        }
+
+        function openTicket(productType = null) {
+            // Open Discord server
+            const discordWindow = window.open(discordServer, '_blank');
+            
+            // Show confirmation message
+            setTimeout(async () => {
+                showTyping();
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                hideTyping();
+                
+                let message = "Great! I've opened Discord for you. ";
+                
+                if (productType) {
+                    message += `Once you're in the server, look for the 🎫 ticket channel and click the button for "${productType.toUpperCase()}" to create your support ticket. Our team will assist you shortly!`;
+                } else {
+                    message += "Once you join, look for the 🎫 ticket channel and create a ticket. Our team will assist you shortly!";
+                }
+                
+                await addMessage(message, true, true);
+            }, 1000);
+        }
+        
+        // For Buy Now button - opens Discord directly to ticket channel if configured
+        function handleBuyNow() {
+            const productTitle = document.getElementById('productTitle').textContent;
+            let productType = 'key'; // default
+            
+            if (productTitle.includes('Script')) productType = 'script';
+            else if (productTitle.includes('USB')) productType = 'usb';
+            
+            // Try to open direct ticket channel, fallback to server invite
+            const ticketUrl = ticketUrls[productType] || discordServer;
+            window.open(ticketUrl, '_blank');
+            
+            // Optional: Show a confirmation in support chat if it's open
+            const supportChat = document.getElementById('supportChat');
+            if (supportChat.classList.contains('active')) {
+                setTimeout(async () => {
+                    showTyping();
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    hideTyping();
+                    await addMessage(`Perfect! I've opened Discord for your ${productTitle} purchase. Look for the ticket channel and our team will help you complete your order!`, true, true);
+                }, 500);
+            }
+        }
+
+        async function handleUserMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const userMessage = chatInput.value.trim();
+            
+            if (!userMessage) return;
+            
+            if (userMessage.length > 500) {
+                addMessage("Please keep your message under 500 characters.", true, true);
+                return;
+            }
+            
+            const sanitizedMessage = sanitizeInput(userMessage);
+            addMessage(sanitizedMessage, false);
+            chatInput.value = '';
+            
+            const delay = getRandomDelay();
+            showTyping();
+            
+            await new Promise(resolve => setTimeout(resolve, delay));
+            
+            hideTyping();
+            const botResponse = getBotResponse(sanitizedMessage);
+            await addMessage(botResponse, true, true);
+        }
+
+        // Toggle sidebar
+        document.getElementById('burger').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+            this.classList.toggle('active');
+        });
+
+        // Show options screen
+        document.getElementById('getNoWBtn').addEventListener('click', function() {
+            const mainScreen = document.getElementById('mainScreen');
+            const optionsScreen = document.getElementById('optionsScreen');
+            
+            mainScreen.classList.add('fade-out');
+            
+            setTimeout(() => {
+                mainScreen.style.display = 'none';
+                optionsScreen.classList.add('active');
+            }, 500);
+        });
+
+        // Back to main screen
+        document.getElementById('backToMain').addEventListener('click', function() {
+            const mainScreen = document.getElementById('mainScreen');
+            const optionsScreen = document.getElementById('optionsScreen');
+            
+            optionsScreen.classList.remove('active');
+            
+            setTimeout(() => {
+                mainScreen.style.display = 'flex';
+                mainScreen.classList.remove('fade-out');
+            }, 500);
+        });
+
+        // Show product details
+        document.querySelectorAll('.option-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const productType = this.getAttribute('data-product');
+                const product = productData[productType];
+                const optionsScreen = document.getElementById('optionsScreen');
+                const detailsScreen = document.getElementById('detailsScreen');
+                
+                document.getElementById('productTitle').textContent = product.title;
+                
+                const benefitsList = document.getElementById('benefitsList');
+                benefitsList.innerHTML = '';
+                product.benefits.forEach(benefit => {
+                    const li = document.createElement('li');
+                    li.textContent = benefit;
+                    benefitsList.appendChild(li);
+                });
+                
+                optionsScreen.classList.remove('active');
+                
+                setTimeout(() => {
+                    detailsScreen.classList.add('active');
+                }, 500);
+            });
+        });
+
+        // Back to options screen
+        document.getElementById('backToOptions').addEventListener('click', function() {
+            const optionsScreen = document.getElementById('optionsScreen');
+            const detailsScreen = document.getElementById('detailsScreen');
+            
+            detailsScreen.classList.remove('active');
+            
+            setTimeout(() => {
+                optionsScreen.classList.add('active');
+            }, 500);
+        });
+
+        // Buy now redirect to Discord
+        document.getElementById('buyNowBtn').addEventListener('click', function() {
+            handleBuyNow();
+        });
+
+        // Support chat functionality
+        document.getElementById('supportLink').addEventListener('click', async function(e) {
+            e.preventDefault();
+            const supportChat = document.getElementById('supportChat');
+            const sidebar = document.getElementById('sidebar');
+            const burger = document.getElementById('burger');
+            
+            sidebar.classList.remove('active');
+            burger.classList.remove('active');
+            supportChat.classList.add('active');
+            
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages.children.length === 1) {
+                showTyping();
+                await new Promise(resolve => setTimeout(resolve, getRandomDelay()));
+                hideTyping();
+                await addMessage(supportResponses.greeting[0], true, true);
+            }
+        });
+
+        // Credit modal
+        document.getElementById('creditLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            const sidebar = document.getElementById('sidebar');
+            const burger = document.getElementById('burger');
+            const modal = document.getElementById('infoModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalContent = document.getElementById('modalContent');
+            
+            sidebar.classList.remove('active');
+            burger.classList.remove('active');
+            
+            modalTitle.textContent = 'Credits';
+            modalContent.innerHTML = `
+                <div class="credit-item">
+                    <span class="credit-label">Founder:</span>
+                    <span class="credit-name">♕𝕮𝖗𝖞𝖕𝖙𝖎𝖈♔</span>
+                </div>
+                <div class="credit-item">
+                    <span class="credit-label">Co-Founder:</span>
+                    <span class="credit-name">Proxyyt</span>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        });
+
+        // Info modal
+        document.getElementById('infoLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            const sidebar = document.getElementById('sidebar');
+            const burger = document.getElementById('burger');
+            const modal = document.getElementById('infoModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalContent = document.getElementById('modalContent');
+            
+            sidebar.classList.remove('active');
+            burger.classList.remove('active');
+            
+            modalTitle.textContent = 'Information';
+            modalContent.innerHTML = `
+                <div class="info-section">
+                    <h3>Explanation of the Cheats</h3>
+                    <p>Welcome to Lovinja's Cheating software for Rust, this game cheat is a super modern and sophisticated cheating software. We will explain the cheats professions for the game, this software has different integrations such as Lovinja Starter, Lovinja VIP, and Lovinja Premium.</p>
+                    <p>This software contains everything to be a professional cheater; it is mostly undetectable based on how the user uses it and plays with it. The software is a great advancement to cheating industries like Rust, CS:GO, and Rainbow 6 Siege.</p>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="info-section">
+                    <h3>What the Cheat Includes</h3>
+                    <p>This cheat includes AI integrated tools to detect, predict, and subside movements based on players. The AI is an ultra fast rendering unit and is highly trained on multiple character Designs / Entities.</p>
+                    <p>The cheat is based around a GUI panel hosting all types of cheats including ESP, Aimbot, NO-recoil, Etc. This cheat bypasses EAC and can modify gameplays.</p>
+                    <p>The cheat can be sold in various different ways such as USB (super-undetectable), Online sources (super-undetectable), or via script host (semi-undetectable).</p>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="info-section">
+                    <h3>How to Get the Cheat</h3>
+                    <p>We offer various sources to our desired customers including Discord, Online sources via private DMs discord, or Gmail.</p>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="info-section">
+                    <h3>Payment Options</h3>
+                    <div class="payment-options">
+                        <span class="payment-badge">CashApp</span>
+                        <span class="payment-badge">PayPal</span>
+                        <span class="payment-badge">Apple Cash</span>
+                        <span class="payment-badge">MasterCard</span>
+                        <span class="payment-badge">Visa</span>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        });
+
+        // Close info modal
+        document.getElementById('closeInfoModal').addEventListener('click', function() {
+            document.getElementById('infoModal').classList.remove('active');
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('infoModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+
+        document.getElementById('closeChat').addEventListener('click', function() {
+            document.getElementById('supportChat').classList.remove('active');
+        });
+
+        document.getElementById('sendBtn').addEventListener('click', handleUserMessage);
+
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleUserMessage();
+            }
+        });
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const burger = document.getElementById('burger');
+            
+            if (!sidebar.contains(e.target) && !burger.contains(e.target) && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                burger.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
